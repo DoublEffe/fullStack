@@ -1,7 +1,16 @@
 import { useState } from "react";
 
 const Button= (props)=>(
-  <button onClick={props.handler}>{props.text}</button>
+  <button onClick={props.handler} id={props.text}>{props.text}</button>
+)
+
+const StatsLine= ({text,value})=>(
+  <tbody>
+    <tr>
+      <th>{text}</th> 
+      <td>{value}</td>
+    </tr>
+  </tbody>
 )
 
 const Stats= (props)=>{
@@ -13,14 +22,15 @@ const Stats= (props)=>{
     return <p>No feedback given</p>
   }
   return (
-    <div>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {all}</p>
-      <p>average {(good-bad)/all}</p>
-      <p>positive {(good/all)*100} %</p>
-    </div>
+    <table>
+      
+      <StatsLine text='good' value={good} />
+      <StatsLine text='neutral' value={neutral} />
+      <StatsLine text='bad' value={bad} />
+      <StatsLine text='all' value={all} />
+      <StatsLine text='average' value={(good-bad)/all} />
+      <StatsLine text='positive' value={(good/all)*100} />
+    </table>
   )
 }
 
@@ -30,6 +40,7 @@ const App= () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
   const [feed, setFeed] = useState(0)
+ 
   
   const setFeedback=(newFeed,check)=>{
     if (check==='good'){
@@ -44,17 +55,18 @@ const App= () => {
       console.log(newFeed)
       setBad(newFeed)
     }
-    
     setFeed(1)
+    
   }
 
+  
   return (
     <div>
       <h2>Give feedback</h2>
       <Button handler={()=>setFeedback(good+1,'good')} text='Good'/>
       <Button handler={()=>setFeedback(neutral+1,'neutral')} text='Neutral'/>
       <Button handler={()=>setFeedback(bad+1,'bad')} text='Bad'/>
-
+      
       <h2>Statistics</h2>
       <Stats good={good} neutral={neutral} bad={bad} feed={feed}/>
       
