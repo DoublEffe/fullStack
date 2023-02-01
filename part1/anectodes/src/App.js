@@ -1,6 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+
 import { useState } from 'react'
+
+const Button = (props) =>(
+  <button onClick={props.handler}>next anecdote</button>
+)
+
+const Vote = (props) =>(
+  <button onClick={props.handler}>vote</button>
+)
+
+const Anecdote = (props) =>(
+  <p>{props.text}</p>
+)
 
 const App = () => {
   const anecdotes = [
@@ -13,12 +24,28 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
+  
    
   const [selected, setSelected] = useState(0)
-
+  const [votes, setVotes] = useState(Array(8).fill(0))
+  
+  const random = () => setSelected(Math.floor(Math.random()*6)) 
+  const storeVotes = () => {
+    const copy=[...votes]
+    copy[selected]+=1
+    setVotes(copy)
+  }  
+    
   return (
     <div>
-      {anecdotes[selected]}
+      <h2>Anecdote of the day</h2>
+      <p>{anecdotes[selected]}</p>
+      <p>has {votes[selected]} votes</p>
+      <Button handler={()=>random()} />
+      <Vote handler={()=>storeVotes()} />
+      
+      <h2>Anecdote with most votes</h2>
+      <Anecdote text={anecdotes[votes.indexOf(Math.max(...votes))]}/>
     </div>
   )
 }
