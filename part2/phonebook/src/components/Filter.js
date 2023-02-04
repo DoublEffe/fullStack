@@ -1,4 +1,4 @@
-import Number from "./components/Number"
+import Number from "./Number"
 
 const Filter =({filter,handler,persons}) =>{
     let filtration = (person)=>{

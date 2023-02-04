@@ -1,49 +1,7 @@
 import { useState } from 'react'
 import Filter from './components/Filter'
-
-const Number = ({persons}) =>{
-  return(
-    <div>
-    {persons.map(
-      person=><p key={person.name}>{person.name} {person.number}</p>
-    )}
-    </div>
-  )
-}
-/*
-const Filter =({filter,handler,persons}) =>{
-  let filtration = (person)=>{
-    return person.name===filter ? true : false
-  }
-  let filtered=persons.filter(filtration)
-  if (filtered[0]){
-    return <Number persons={filtered} />
-  }
-  return(
-    <div>
-      filter shown with <input value={filter} onChange={handler} />
-      
-    </div>
-  )
-}
-*/
-const PersonForm = ({onsubmit,name,number,handlerperson,handlernumber}) =>{
-  return(
-    <div>
-      <form onSubmit={onsubmit}>
-        <div>
-          name: <input value={name} onChange={handlerperson} />
-        </div>
-        <div>
-          number: <input value={number} onChange={handlernumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-    </div>
-  )
-}
+import Number from './components/Number'
+import PersonForm from './components/PersonForm'
 
 const App = () => {
   const [persons, setPersons] = useState([
