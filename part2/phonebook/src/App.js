@@ -1,25 +1,20 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
+
 import Filter from './components/Filter'
 import Number from './components/Number'
 import PersonForm from './components/PersonForm'
+import numbersService from './services/numbersService'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: '040-1234567'
-    },
-    {
-      name: 'Ada Lovelace',
-      number: '39-44-5323523'
-    },
-    {
-      name: 'Dan Abramov',
-      number: '12-43-234345'
-    }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+
+  useEffect(()=>{
+    numbersService.getAll()
+    .then(numbers=>setPersons(numbers))
+  },[])
 
   const handleNewFilter = (event) => {
     event.preventDefault()
@@ -46,9 +41,12 @@ const App = () => {
       setNewName('')
       return alert(`${newName} already exist`)
     }
-    setPersons(persons.concat(number))
-    setNewName('')
-    setNewNumber('')
+    numbersService.create(number)
+    .then(returnedNumber=>{
+      setPersons(persons.concat(returnedNumber))
+      setNewName('')
+      setNewNumber('')
+    })
 
   }
 
