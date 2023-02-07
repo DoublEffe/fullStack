@@ -14,7 +14,7 @@ const App = () => {
   useEffect(()=>{
     numbersService.getAll()
     .then(numbers=>setPersons(numbers))
-  },[])
+  },[persons])
 
   const handleNewFilter = (event) => {
     event.preventDefault()
@@ -37,17 +37,35 @@ const App = () => {
       name:newName,
       number:newNumber,
     }
-    if (persons.find(person=>person.name===newName)){
+    let persontoupdate=persons.find(person=>person.name===newName)
+    if (persontoupdate){
       setNewName('')
-      return alert(`${newName} already exist`)
+      if (window.confirm(`${newName} already exist do you want to update the number?`)){
+        numbersService.update(persontoupdate.id,number)
+        .then(updated=>{console.log(updated);setNewNumber('')})
+        
+      }
     }
+    else{
     numbersService.create(number)
     .then(returnedNumber=>{
       setPersons(persons.concat(returnedNumber))
       setNewName('')
       setNewNumber('')
     })
+  }
 
+  }
+
+  const deleteNumber = (id)=>() =>{
+   
+    let numbertodelete=persons.find(person=>person.id===id)
+    
+    let checkdel=window.confirm(`Do you want delete ${numbertodelete.name}`)
+    if (checkdel){
+      numbersService.cancel(id)
+      .then(deleted=>console.log(deleted))
+    }
   }
 
   return (
@@ -67,7 +85,8 @@ const App = () => {
                   handlernumber={handleNewNumber} />
       <h2>Numbers</h2>
 
-      <Number persons={persons}/>
+      <Number persons={persons} handlerdelete={deleteNumber}/>
+      
     </div>
   )
 }
