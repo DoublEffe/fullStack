@@ -3,13 +3,16 @@ import { useState,useEffect } from 'react'
 import Filter from './components/Filter'
 import Number from './components/Number'
 import PersonForm from './components/PersonForm'
+import Message from './components/Message'
 import numbersService from './services/numbersService'
 
 const App = () => {
+  let error=false
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [message, setMessage] = useState('')
 
   useEffect(()=>{
     numbersService.getAll()
@@ -43,6 +46,11 @@ const App = () => {
       if (window.confirm(`${newName} already exist do you want to update the number?`)){
         numbersService.update(persontoupdate.id,number)
         .then(updated=>{console.log(updated);setNewNumber('')})
+        .catch(error=>{
+          error=true
+          setMessage(`${newName} was already deleted`)
+          setTimeout(()=>setMessage(''),5000)
+        })
         
       }
     }
@@ -53,7 +61,10 @@ const App = () => {
       setNewName('')
       setNewNumber('')
     })
+    setMessage(`${newName} added`)
+    setTimeout(()=>setMessage(''),5000)
   }
+  
 
   }
 
@@ -71,7 +82,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      
+      <Message message={message} error={error} />
       <Filter filter={newFilter} 
               handler={handleNewFilter}   
               persons={persons} />
