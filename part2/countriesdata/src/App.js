@@ -1,15 +1,17 @@
 import {useState,useEffect} from 'react'
 import axios from 'axios'
+//473e4acc1b794bdab1295011231002
 
-
-const SingleCountry = ({country}) => {
+const SingleCountry = ({country,weather}) => {
   let name=country[0].name.common
   let capital=country[0].capital[0]
   let area=country[0].area
   let languages=Object.values(country[0].languages)
   let imgsrc=country[0].flags.png
   let imgalt=country[0].flags.alt
-
+  let temp=weather.current.temp_c
+  let wind=Math.round(((weather.current.wind_mph)/2.236937)*100)/100
+  let weather_icon=weather.current.condition.icon
   return(
     <div>
       <h2>{name}</h2>
@@ -22,12 +24,16 @@ const SingleCountry = ({country}) => {
         {languages.map(language=><li>{language}</li>)}
       </ul>
       <img src={imgsrc} alt={imgalt}/>
+      <h4>Weather in {capital}</h4>
+      <p>temperature {temp} celsius</p>
+      <img src={weather_icon}/>
+      <p>wind {wind} m/s</p>
     </div>
   )
 }
 
-const Display = ({countries,check,handler}) => {
-  console.log(check)
+const Display = ({countries,check,handler,weather}) => {
+  
   if(check==='between'){
     return(
       <div>
@@ -48,10 +54,10 @@ const Display = ({countries,check,handler}) => {
     <p>too many matches, specify another filter</p>
   )}
   else if(check==='one'){
-    console.log(countries)
+    
     return(
       <div>
-        <SingleCountry country={countries}/>
+        <SingleCountry country={countries} weather={weather} />
         
       </div>
     )
@@ -59,10 +65,11 @@ const Display = ({countries,check,handler}) => {
 }
 
 const App = () => {
-  
+  const api_key = process.env.REACT_APP_API_KEY
   const [country,setNewCountry] = useState('')
   const [countries,setCountries] = useState([])
   const [display,setDisplay] = useState('')
+  const [weather,setWeather] = useState([])
   
   useEffect(()=>{
     if(countries.length>10){
@@ -72,28 +79,34 @@ const App = () => {
       setDisplay('between')
     }
     else if(countries.length===1){
-      setDisplay('one')
+      
+      let capital=countries[0].capital[0]
+      axios.get(`http://api.weatherapi.com/v1/current.json?key=${api_key}&q=${capital}&aqi=no`)
+      .then(response=>{console.log(response.data);setWeather(response.data);setDisplay('one')})
+      
+      
     }
   },[countries.length])
 
   const handleCountry = (event)=>{
     event.preventDefault()
     setNewCountry(event.target.value)
-    console.log(country)
+    
   }
 
   const handleApi = (event) =>{
     event.preventDefault()
     axios.get(`https://restcountries.com/v3.1/name/${country}`)
-    .then(response=>{console.log(response.data);setCountries(response.data)})
+    .then(response=>{setCountries(countries.concat(response.data))})
     setNewCountry('')
   }
 
   const handlerShow = (name) => () =>{
     
-    console.log('ppp')
+    
     axios.get(`https://restcountries.com/v3.1/name/${name}`)
-    .then(response=>{console.log(response.data);setCountries(response.data)})
+    .then(response=>{setCountries(response.data)})
+    
   }
   
   return (
@@ -101,7 +114,7 @@ const App = () => {
       <form onSubmit={handleApi}>
         find countries <input value={country} onChange={handleCountry}/>
       </form>
-      <Display countries={countries} check={display} handler={handlerShow}/>
+      <Display countries={countries} check={display} handler={handlerShow} weather={weather} />
       
     </div>
   );
