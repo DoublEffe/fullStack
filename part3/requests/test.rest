@@ -15,3 +15,6 @@ Content-Type: application/json
     "name": "A",
     "number": "040-123456"
 }
+
+###
+GET http://localhost:3001

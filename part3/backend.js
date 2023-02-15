@@ -4,7 +4,8 @@ const morgan = require('morgan')
 
 const app = express()
 app.use(express.json())
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+app.use(express.static('build'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 
 let persons = [
     { 
@@ -71,11 +72,11 @@ app.post('/api/persons',(request,response)=>{
   }
   persons=persons.concat(person)
   response.json(person)
-  console.log(Object.prototype.toString(body))
+  
   morgan.token('body',()=>JSON.stringify(body))
- 
+  
 })
-
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.delete('/api/persons/:id',(request,response)=>{
   let id=Number(request.params.id)
