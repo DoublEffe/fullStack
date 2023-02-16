@@ -17,7 +17,7 @@ const App = () => {
   useEffect(()=>{
     numbersService.getAll()
     .then(numbers=>setPersons(numbers))
-  },[persons])
+  },[persons.length])
 
   const handleNewFilter = (event) => {
     event.preventDefault()
@@ -71,11 +71,11 @@ const App = () => {
   const deleteNumber = (id)=>() =>{
    
     let numbertodelete=persons.find(person=>person.id===id)
-    
+    let update=persons.filter(person=>person.name!==numbertodelete.name)
     let checkdel=window.confirm(`Do you want delete ${numbertodelete.name}`)
     if (checkdel){
       numbersService.cancel(id)
-      .then(deleted=>console.log(deleted))
+      .then(deleted=>setPersons(persons.concat(update)))
     }
   }
 
@@ -85,7 +85,8 @@ const App = () => {
       <Message message={message} error={error} />
       <Filter filter={newFilter} 
               handler={handleNewFilter}   
-              persons={persons} />
+              persons={persons}
+              handlerdelete={deleteNumber} />
       
       <h2>add a new</h2>
 
