@@ -18,3 +18,18 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3001/
+
+###
+GET https://phonebook-8jxv.onrender.com/api/persons
+
+###
+POST https://phonebook-8jxv.onrender.com/api/persons
+Content-Type: application/json
+
+{
+    "name": "A",
+    "number": "040-123456"
+}
+
+###
+GET https://phonebook-8jxv.onrender.com/info
