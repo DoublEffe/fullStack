@@ -2,6 +2,7 @@ const { response } = require('express')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
 
 const app = express()
 app.use(express.json())
@@ -32,20 +33,40 @@ let persons = [
       "number": "39-23-6423122"
     }
 ]
+let password='qcfbFVMQjI2pvCiE'
+const url = `mongodb+srv://fabio:${password}@phonebook.rrxtpvp.mongodb.net/?retryWrites=true&w=majority`
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
+
+const personsSchema = new mongoose.Schema({
+    
+    name: String,
+    number: String
+})
+
+personsSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+const Persons = mongoose.model('Pesrons',personsSchema)
 
 app.get('/api/persons',(request, response) => {
-    response.json(persons)
+  Persons.find({}).then(persons=>{
+    response.json(persons)})
   })
 
 app.get('/api/persons/:id',(request,response)=>{
-  let id=Number(request.params.id)
-  let person=persons.find(person=>person.id===id)
+  let person=Persons.findById(request.params.id)
   if(person){
-    response.json(person)
-    }
-    else{
-      response.status(404).end()
-    }
+    person.then(person=>response.json(person))
+  }
+  else{
+    response.status(404).end()
+  }
 })  
 
 app.get('/info',(request,response) =>{
@@ -63,26 +84,25 @@ app.post('/api/persons',(request,response)=>{
       error:'name or number missing'
     })
   }
-  if(persons.find(person=>person.name === body.name)){
-    return response.status(400).json({
-      error:'name must be unique'
-    })
-  }
-  let person={
-    "id":id,
+  
+  const persons = new Persons({
+    
     "name":body.name,
     "number":body.number
-  }
-  persons=persons.concat(person)
-  response.json(person)
+  })
+  persons.save().then(result=>{
+    response.json(result)
+    mongoose.connection.close()
+  })
   
   
 })
 
 
 app.delete('/api/persons/:id',(request,response)=>{
-  let id=Number(request.params.id)
-  persons=persons.filter(person=>person.id!==id)
+  
+  Persons.deleteOne(request.params.id)
+  
   response.status(204).end()
 })
 
