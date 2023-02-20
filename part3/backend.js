@@ -1,8 +1,9 @@
+require('dotenv').config()
 const { response } = require('express')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
+
 
 const app = express()
 app.use(express.json())
@@ -33,26 +34,12 @@ let persons = [
       "number": "39-23-6423122"
     }
 ]
-let password='qcfbFVMQjI2pvCiE'
-const url = `mongodb+srv://fabio:${password}@phonebook.rrxtpvp.mongodb.net/?retryWrites=true&w=majority`
-mongoose.set('strictQuery',false)
-mongoose.connect(url)
 
-const personsSchema = new mongoose.Schema({
-    
-    name: String,
-    number: String
-})
 
-personsSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
 
-const Persons = mongoose.model('Pesrons',personsSchema)
+
+
+const Persons = require('./models/persons')
 
 app.get('/api/persons',(request, response) => {
   Persons.find({}).then(persons=>{
@@ -70,10 +57,11 @@ app.get('/api/persons/:id',(request,response)=>{
 })  
 
 app.get('/info',(request,response) =>{
-  response.send(`<div>
-                  <p>Phonebook has info for ${persons.length} people</p>
-                  <p>${Date()}</p>
-                </div>`)
+  Persons.find({}).then(persons=>{
+    response.send(`<div>
+                    <p>Phonebook has info for ${persons.length} people</p>
+                    <p>${Date()}</p>
+                  </div>`)})
 })
 
 app.post('/api/persons',(request,response)=>{
@@ -101,7 +89,7 @@ app.post('/api/persons',(request,response)=>{
 
 app.delete('/api/persons/:id',(request,response)=>{
   
-  Persons.deleteOne(request.params.id)
+  Persons.deleteOne({_id:request.params.id}).then(result=>console.log(result))
   
   response.status(204).end()
 })
