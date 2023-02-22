@@ -68,7 +68,7 @@ app.get('/info',(request,response) =>{
                   </div>`)})
 })
 
-app.post('/api/persons',(request,response)=>{
+app.post('/api/persons',(request,response,next)=>{
   let id =Math.floor(Math.random() * (100 - 4 + 1) + 4)
   let body=request.body
   if(!body.name || !body.number){
@@ -86,6 +86,7 @@ app.post('/api/persons',(request,response)=>{
     response.json(result)
     mongoose.connection.close()
   })
+  .catch(error=>next(error))
   
   
 })
@@ -100,13 +101,13 @@ app.delete('/api/persons/:id',(request,response,next)=>{
 })
 
 app.put('/api/persons/:id',(request,response,next)=>{
-  let body=request.body
+  let {name,number}=request.body
   const persons = {
     
     "name":body.name,
     "number":body.number
   }
-  Persons.findByIdAndUpdate(request.params.id,persons,{new:true})
+  Persons.findByIdAndUpdate(request.params.id,{name,number},{new:true, runValidators: true, context: 'query'})
   .then(personupdated=>response.json(personupdated))
   .catch(error=>next(error))
 })
@@ -116,6 +117,9 @@ const errorhandler = (error,request,response,next) =>{
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } 
+  if(error.name === 'ValidationError'){
+    return response.status(400).json({ error: error.message })
+  }
   next(error)
 }
 app.use(errorhandler)
