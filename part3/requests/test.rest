@@ -35,7 +35,7 @@ POST https://phonebook-8jxv.onrender.com/api/persons
 Content-Type: application/json
 
 {
-    "name": "A",
+    "name": "yyy",
     "number": "040-123456"
 }
 

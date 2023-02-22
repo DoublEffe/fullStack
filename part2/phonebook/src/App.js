@@ -7,16 +7,18 @@ import Message from './components/Message'
 import numbersService from './services/numbersService'
 
 const App = () => {
-  let error=false
+  
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [message, setMessage] = useState('')
+  const [checkerror, setError] = useState(false)
 
   useEffect(()=>{
     numbersService.getAll()
     .then(numbers=>setPersons(numbers))
+    
   },[persons.length])
 
   const handleNewFilter = (event) => {
@@ -47,9 +49,11 @@ const App = () => {
         numbersService.update(persontoupdate.id,number)
         .then(updated=>{console.log(updated);setNewNumber('')})
         .catch(error=>{
-          error=true
+          setError(true)
           setMessage(`${newName} was already deleted`)
           setTimeout(()=>setMessage(''),5000)
+          setNewName('')
+          setNewNumber('')
         })
         
       }
@@ -61,6 +65,11 @@ const App = () => {
       setNewName('')
       setNewNumber('')
     })
+    .catch(error=>{
+                setError(true)
+              setMessage(error.response.data.error)
+              setNewName('')
+              setNewNumber('')})
     setMessage(`${newName} added`)
     setTimeout(()=>setMessage(''),5000)
   }
@@ -82,7 +91,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Message message={message} error={error} />
+      <Message message={message} error={checkerror} />
       <Filter filter={newFilter} 
               handler={handleNewFilter}   
               persons={persons}

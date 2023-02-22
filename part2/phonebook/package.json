@@ -19,11 +19,10 @@
     "eject": "react-scripts eject",
     "server": "json-server -p3001 --watch db.json --ignore client"
   },
-  "proxy": {
-    "/auth/google": {
-      "target": "localhost:3001"
-    }
-  },
+  "proxy": 
+       "http://localhost:3001"
+    
+  ,
   "eslintConfig": {
     "extends": [
       "react-app",
