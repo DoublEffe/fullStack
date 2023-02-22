@@ -7,14 +7,13 @@ const url=process.env.MONGODB_URI
 mongoose.connect(url)
 
 const personsSchema = new mongoose.Schema({
-    
-    name: {type: String,
-          minLength: 3,
-          required: true},
-    number: {type: String,
-          minLength: 8,
-         required: true,
-        validate:{validator:number=>/^(\d{2}||\d{3})-\d/.test(number)}}
+  name: { type: String,
+    minLength: 3,
+    equired: true },
+  number: { type: String,
+    minLength: 8,
+    required: true,
+    validate:{ validator:number => /^(\d{2}||\d{3})-\d/.test(number) } }
 })
 
 personsSchema.set('toJSON', {
