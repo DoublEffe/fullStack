@@ -1,20 +1,13 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const mongoose = require('mongoose')
-mongoose.set('strictQuery', false)
 
-const blogSchema = new mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
-})
 
-const Blog = mongoose.model('Blog', blogSchema)
+const Blog = require('./models/blogs')
+//const mongoUrl = 'mongodb+srv://fabio:MbC6TTaX3q62c9qi@cluster0.jonu63n.mongodb.net/?retryWrites=true&w=majority'
 
-const mongoUrl = 'mongodb+srv://fabio:MbC6TTaX3q62c9qi@cluster0.jonu63n.mongodb.net/?retryWrites=true&w=majority'
-mongoose.connect(mongoUrl)
+
 
 app.use(cors())
 app.use(express.json())
@@ -37,7 +30,8 @@ app.post('/api/blogs', (request, response) => {
     })
 })
 
-const PORT = 3003
+// eslint-disable-next-line no-undef
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
