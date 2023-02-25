@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
+const config = require('../utils/config')
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -9,5 +10,5 @@ const blogSchema = new mongoose.Schema({
 })
 
 module.exports = mongoose.model('Blog', blogSchema)
-// eslint-disable-next-line no-undef
-mongoose.connect(process.env.MONGODB_URI)
+
+mongoose.connect(config.MONGODB_URI)
