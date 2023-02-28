@@ -11,15 +11,44 @@ const totlaLikes = (blogs) => {
 }
 
 const favoriteBlog = (blogs) => {
-  let allLikes = []
+  let mostLiked = {}
+  let max = 0
   blogs.forEach(blog => {
-    allLikes.push(blog.likes)
+    if(blog.likes > max){
+      max = blog.likes
+      mostLiked = blog
+    }
   })
-  return Math.max(...allLikes)
+  let { title, author, likes }=mostLiked
+  return { title, author , likes }
+}
+
+const mostBlogs = (blogs) => {
+  let mostBlogs = {}
+  let max = 0
+  blogs.forEach(blog => {
+    if(blog.blog>max){
+      max = blog.blog
+      mostBlogs = blog
+    }
+  })
+  let { author, blog } = mostBlogs
+  return { author,blog }
+}
+
+const mostLikes = (blogs) => {
+  let mostLikes = blogs.reduce((prev,curr,index) => {
+    if(index===0){return curr}
+    return prev.likes > curr.likes ? prev : curr
+  },0)
+  let { author,likes } = mostLikes
+  return { author,likes }
 }
 
 module.exports = {
   dummy,
   totlaLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs,
+  mostLikes
 }

@@ -85,8 +85,96 @@ describe('most liked blog',() => {
       __v: 0
     }
   ]
+  const mostLiked = {
+    title: 'Go To Statement Considered Harmful',
+    author: 'Edsger W. Dijkstra',
+    likes: 10,
+  }
 
   test('most liked',() => {
-    expect(listHelper.favoriteBlog(listWithMultipleBlog)).toEqual()
+    expect(listHelper.favoriteBlog(listWithMultipleBlog)).toEqual(mostLiked)
+  })
+})
+
+describe('author with most blogs',() => {
+  const listAuthor = [
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 5,
+      blog: 3,
+      __v: 0
+    },
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 8,
+      blog: 2,
+      __v: 0
+    },
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'George R. Martin',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 10,
+      blog: 4,
+      __v: 0
+    }
+  ]
+  const mostAuthor = {
+    author: 'George R. Martin',
+    blog: 4
+  }
+
+
+  test('most blog',() => {
+    console.log(listHelper.mostBlogs(listAuthor))
+    expect(listHelper.mostBlogs(listAuthor)).toEqual(mostAuthor)
+  })
+})
+
+describe('monst liked post',() => {
+  const listAuthor = [
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 17,
+      blog: 3,
+      __v: 0
+    },
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 8,
+      blog: 2,
+      __v: 0
+    },
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'George R. Martin',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 10,
+      blog: 4,
+      __v: 0
+    }
+  ]
+  const mostLiked = {
+    author: 'Edsger W. Dijkstra',
+    likes: 17
+  }
+
+  test('most liked',() => {
+    console.log(listHelper.mostLikes(listAuthor))
+    expect(listHelper.mostLikes(listAuthor)).toEqual(mostLiked)
   })
 })
