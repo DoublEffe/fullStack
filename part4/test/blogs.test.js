@@ -163,14 +163,14 @@ describe('monst liked post',() => {
       title: 'Go To Statement Considered Harmful',
       author: 'George R. Martin',
       url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-      likes: 10,
+      likes: 20,
       blog: 4,
       __v: 0
     }
   ]
   const mostLiked = {
-    author: 'Edsger W. Dijkstra',
-    likes: 17
+    author: 'George R. Martin',
+    likes: 20
   }
 
   test('most liked',() => {
