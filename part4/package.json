@@ -4,9 +4,9 @@
   "description": "",
   "main": "blogpost.js",
   "scripts": {
-    "start": "NODE_ENV=production node bloglist.js",
-    "dev": "SET NODE_ENV=development nodemon bloglist.js",
-    "test": "jest --verbose --runInBand"
+    "start": "NODE_ENV=production&&node bloglist.js",
+    "dev": "SET NODE_ENV=development&&nodemon bloglist.js",
+    "test": "SET NODE_ENV=test&&jest --verbose --runInBand"
   },
   "author": "fabio",
   "license": "MIT",
