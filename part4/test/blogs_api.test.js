@@ -38,6 +38,12 @@ test('return all blogs',async () => {
   expect(response.body).toHaveLength(initialBlogs.length)
 })
 
+test.only('id format',async () => {
+  const response = await api.get('/api/blogs')
+  response.body.forEach(blog =>
+    expect(blog._id).not.toBeDefined())
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
