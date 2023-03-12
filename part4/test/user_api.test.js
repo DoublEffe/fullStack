@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../bloglist')
-const Users = require('../models/user')
 
 const api = supertest(app)
+const testPost = (newUser) => api.post('/api/users').send(newUser)
 
 test('missing username',async () => {
   const newUser = {
@@ -11,10 +11,8 @@ test('missing username',async () => {
     password: '1234'
   }
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(401)
+  await testPost(newUser).expect(400)
+  expect((await testPost(newUser)).text).toMatch('Users validation failed: username: Path `username` is required')
 })
 
 test('missing password',async () => {
@@ -23,10 +21,9 @@ test('missing password',async () => {
     name: 'fa',
   }
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(401)
+  await testPost(newUser).expect(400)
+
+  expect((await testPost(newUser)).text).toMatch('{"error":"password missing or too short"}')
 })
 
 test('too short username',async () => {
@@ -36,10 +33,9 @@ test('too short username',async () => {
     password: '1234'
   }
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(401)
+  await testPost(newUser).expect(400)
+
+  expect((await testPost(newUser)).text).toMatch('Users validation failed: username: Path `username` (`fa`) is shorter than the minimum allowed length (3)')
 })
 
 test('too short password',async () => {
@@ -49,33 +45,21 @@ test('too short password',async () => {
     password: '12'
   }
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(401)
+  await testPost(newUser).expect(400)
+
+  expect((await testPost(newUser)).text).toMatch('{"error":"password missing or too short"}')
 })
 
-test.only('unique username',async () => {
-  const correctUser = {
-    username: 'fabio',
-    name: 'fa',
-    password: '1234'
-  }
+test('unique username',async () => {
   const newUser = {
     username: 'fabio',
     name: 'fa',
     password: '1234'
   }
 
-  await api
-    .post('/api/users')
-    .send(correctUser)
-    .expect(201)
+  await testPost(newUser).expect(400)
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(401)
+  expect((await testPost(newUser)).text).toMatch('Users validation failed: username: Error, expected `username` to be unique. Value: `fabio`')
 })
 
 afterAll(async () => {
