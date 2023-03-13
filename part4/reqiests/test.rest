@@ -2,10 +2,11 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "prova1",
+    "title": "prova11",
     "author": "fabio",
     "url": "http://bo",
-    "likes": 1
+    "likes": 1,
+    "userId": "640efc33564c290a68ca5a19"
 }
 
 ###
@@ -16,9 +17,9 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-    "username": "fab",
+    "username": "fabio55",
     "name": "fabio",
-    "password": "12"
+    "password": "1234"
 }
 
 ###
