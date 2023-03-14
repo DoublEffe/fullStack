@@ -8,15 +8,16 @@ const usersRouter = require('./controller/userroute')
 const loginRouter = require('./controller/loginroute')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
-const errorHandler = require('./utils/middleware')
+const middleware = require('./utils/middleware')
 
 app.use(cors())
 app.use(express.json())
+app.use(middleware.getToken)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
-app.use(errorHandler)
+app.use(middleware.errorHandler)
 
 app.listen(config.PORT, () => {
   logger.info(`Server running on port ${config.PORT}`)
