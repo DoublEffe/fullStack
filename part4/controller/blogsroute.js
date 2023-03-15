@@ -2,15 +2,6 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blogs')
 const Users = require('../models/user')
 const jwt = require('jsonwebtoken')
-/*
-const getToken = request => {
-  const auth = request.get('authorization')
-  if (auth && auth.startsWith('Bearer ')){
-    return auth.replace('Bearer ','')
-  }
-  return null
-}
-*/
 
 blogsRouter.get('/',async (request, response) => {
   const blogs = await Blog.find({}).populate('user',{ username:1,name:1 })
@@ -45,8 +36,19 @@ blogsRouter.post('/',async (request, response) => {
 })
 
 blogsRouter.delete('/:id',async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+  // eslint-disable-next-line no-undef
+  const token = jwt.verify(request.token,process.env.SECRET)
+  if(!(token.id)){
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const blog = await Blog.findById(request.params.id)
+  if(blog.user.toString() === token.id){
+    await Blog.findByIdAndRemove(request.params.id)
+    response.status(204).end()
+  }
+  else{
+    return response.status(401).json({ error: 'user don\'t have authorization' })
+  }
 })
 
 blogsRouter.put('/:id',async (request,response) => {
