@@ -1,13 +1,13 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhYmlvMzIiLCJpZCI6IjY0MTA1MzEwYmI0Y2FlMWExN2E2ZGNiYyIsImlhdCI6MTY3ODc5MjA2N30.U68mYBfcWEb-H2ApoE6Ia-Ke7zJ-24CC-urfmH6d-Ow
-
-{
-    "title": "prova8",
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhYmlvMzI1IiwiaWQiOiI2NDEwYjQzMDMyNmIxNjg2ZDJhMGI2YWYiLCJpYXQiOjE2Nzg4NzEyNTN9.axVrqmV6PwzgARLMauLHpVgDj-gJ9H-mgIGbiI0-wZM
+ 
+{ 
+    "title": "prova363",
     "author": "fabio",
     "url": "http://bo",
     "likes": 1,
-    "userId": "64105310bb4cae1a17a6dcbc"
+    "userId": "6410b430326b1686d2a0b6af"
 }
 
 ###
@@ -18,7 +18,7 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-    "username": "fabio32",
+    "username": "fabio325",
     "name": "fabio",
     "password": "1234"
 }
@@ -34,3 +34,7 @@ Content-Type: application/json
     "username": "fabio32",
     "password": "1234"
 }
+
+###
+DELETE http://localhost:3003/api/blogs/64118b1c742200f4354f5eb2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhYmlvMzI1IiwiaWQiOiI2NDEwYjQzMDMyNmIxNjg2ZDJhMGI2YWYiLCJpYXQiOjE2Nzg4NzEyNTN9.axVrqmV6PwzgARLMauLHpVgDj-gJ9H-mgIGbiI0-wZM
