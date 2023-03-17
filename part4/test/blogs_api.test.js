@@ -1,22 +1,28 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-//const { response } = require('../bloglist')
 const app = require('../bloglist')
 const Blogs = require('../models/blogs')
 
 const api = supertest(app)
+const initialUser = {
+  username: 'fabio',
+  password: '1234',
+}
+let tokenReq = ''
 const initialBlogs = [
   {
     title: 'prova',
     author: 'fabio',
     url: 'http://prova',
-    likes: 2
+    likes: 2,
+    user: '64120b3f34b0a8035502d476'
   },
   {
     title: 'prova1',
     author: 'fabio1',
     url: 'http://prova1',
-    likes: 4
+    likes: 5,
+    user: '64120b3f34b0a8035502d476'
   }
 ]
 beforeEach(async () => {
@@ -24,25 +30,63 @@ beforeEach(async () => {
   const blogInDb = initialBlogs.map(blog => new Blogs(blog))
   const promise = blogInDb.map(blog => blog.save())
   await Promise.all(promise)
+  tokenReq = await api.post('/api/login').send(initialUser)
 })
 
-test('blogs returned as json',async() => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type',/application\/json/)
+describe('check for blogs existance and format',() => {
+  test('blogs returned as json',async() => {
 
-},100000)
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type',/application\/json/)
+  })
 
-test('return all blogs',async () => {
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(initialBlogs.length)
-})
+  test('return all blogs',async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(initialBlogs.length)
+  })
 
-test('id format',async () => {
-  const response = await api.get('/api/blogs')
-  response.body.forEach(blog =>
-    expect(blog._id).not.toBeDefined())
+  test('id format',async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach(blog =>
+      expect(blog._id).not.toBeDefined())
+  })
+
+  test('title or  url missing',async () => {
+    const newBlog = [
+      {
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+      },
+      {
+        author: 'Edsger W. Dijkstra',
+        url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
+      }
+    ]
+
+    await api
+      .post('/api/blogs')
+      .set({ Authorization:'Bearer '+ tokenReq.body.token })
+      .send(newBlog)
+      .expect(400)
+  })
+
+  test('likes default to 0',async () => {
+    const newBlog = {
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+    }
+
+    await api
+      .post('/api/blogs')
+      .set({ Authorization:'Bearer '+ tokenReq.body.token })
+      .send(newBlog)
+
+    const response = await api.get('/api/blogs')
+    expect(response.body[2]).toEqual(expect.objectContaining({ likes: 0 }))
+  })
 })
 
 test('post a blog',async () => {
@@ -55,6 +99,7 @@ test('post a blog',async () => {
 
   await api
     .post('/api/blogs')
+    .set({ Authorization:'Bearer '+ tokenReq.body.token })
     .send(newBlog)
     .expect(201)
     .expect('Content-Type',/application\/json/)
@@ -66,43 +111,26 @@ test('post a blog',async () => {
   expect(urls).toContain('http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html')
 })
 
-test('likes default to 0',async () => {
+test('missing auth',async () => {
   const newBlog = {
     title: 'Go To Statement Considered Harmful',
     author: 'Edsger W. Dijkstra',
     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+    likes: 10,
   }
 
   await api
     .post('/api/blogs')
     .send(newBlog)
-
-  const response = await api.get('/api/blogs')
-  expect(response.body[2]).toEqual(expect.objectContaining({ likes: 0 }))
-})
-
-test('title or  url missing',async () => {
-  const newBlog = [
-    {
-      title: 'Go To Statement Considered Harmful',
-      author: 'Edsger W. Dijkstra',
-    },
-    {
-      author: 'Edsger W. Dijkstra',
-      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
-    }
-  ]
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
+    .set({ Authorization:'Bearer ciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhYmlvMzI1IiwiaWQiOiI2NDEwYjQzMDMyNmIxNjg2ZDJhMGI2YWYiLCJpYXQiOjE2Nzg4NzEyNTN9.axVrqmV6PwzgARLMauLHpVgDj-gJ9H-mgIGbiI0-wZM' })
+    .expect(401)
 })
 
 test('deleting a blog',async () => {
   const response = await api.get('/api/blogs')
   await api
     .delete(`/api/blogs/${ response.body[0].id }`)
+    .set({ Authorization:'Bearer '+ tokenReq.body.token })
     .expect(204)
   const afterDel = await api.get('/api/blogs')
   const blogsurl = afterDel.body.map(blog => blog.url)
@@ -112,7 +140,7 @@ test('deleting a blog',async () => {
 
 })
 
-test.only('updating a blog',async () => {
+test('updating a blog',async () => {
   const toUpdate = {
     title: 'prova3',
     author: 'fabio',

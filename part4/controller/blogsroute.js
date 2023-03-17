@@ -1,22 +1,16 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blogs')
+const middleware = require('../utils/middleware')
 
 blogsRouter.get('/',async (request, response) => {
   const blogs = await Blog.find({}).populate('user',{ username:1,name:1 })
   response.json(blogs)
 })
 
-blogsRouter.post('/',async (request, response) => {
+blogsRouter.post('/',middleware.getUser,async (request, response) => {
   const body = request.body
-  /*
-  // eslint-disable-next-line no-undef
-  const token = jwt.verify(request.token,process.env.SECRET)
-  if(!(token.id)){
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await Users.findById(token.id)
-  */
   const user = request.user
+
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -36,7 +30,7 @@ blogsRouter.post('/',async (request, response) => {
   }
 })
 
-blogsRouter.delete('/:id',async (request, response) => {
+blogsRouter.delete('/:id',middleware.getUser,async (request, response) => {
   const blog = await Blog.findById(request.params.id)
   if(blog.user.toString() === request.user.id){
     await Blog.findByIdAndRemove(request.params.id)
