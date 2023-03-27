@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import BlogList from './components/BlogList'
 import Login from './components/Login'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Toggable'
 import Message from './components/Message'
 import blogService from './services/blogs'
 import userServices from './services/login'
@@ -12,9 +13,6 @@ const App = () => {
   const [username, setUserName] = useState('')
   const [password, setPassWord] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [success, setSucces] = useState(null)
   const [error, setError] = useState(null)
 
@@ -71,44 +69,22 @@ const App = () => {
       setSucces(null)
     }, 5000)
   }
-
-  const handleTitle = (event) => {
-    event.preventDefault()
-    setTitle(event.target.value)
-  }
-
-  const handleAuthor = (event) => {
-    event.preventDefault()
-    setAuthor(event.target.value)
-  }
-
-  const handleUrl = (event) => {
-    event.preventDefault()
-    setUrl(event.target.value)
-  }
   
-  const handleNewBlog = async (event) => {
-    event.preventDefault()
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url 
-    }
+  const handleNewBlog = async (blog) => {
     try{
-      await blogService.newBlog(newBlog,user.token)
+      await blogService.newBlog(blog,user.token)
     }catch(e){
       setError('must provide title,author and url')
       setTimeout(() => {
         setError(null)
       }, 5000)
     }
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-    setSucces(`a new blog ${title} by ${author}`)
+    
+    setSucces(`a new blog ${blog.title} by ${blog.author}`)
     setTimeout(() => {
       setSucces(null)
     }, 5000)
+    
   }
 
   return (
@@ -121,7 +97,9 @@ const App = () => {
         <p>{ user.username } logged in</p>
         <button onClick={ handleLogOut }>Log out</button>
         <h2>create new</h2>
-        <BlogForm title={ title } author={ author } url={ url } handlerTitle={handleTitle} handlerAuthor={handleAuthor} handlerUrl={handleUrl} onCreate={handleNewBlog} />
+        <Togglable buttonLabel="new blog" >
+          <BlogForm onCreate={handleNewBlog} />
+        </Togglable>
         <h2>blogs</h2>
         {blogs.map(blog =>
           <BlogList key={blog.id} blog={blog}/>
