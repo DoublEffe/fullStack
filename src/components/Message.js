@@ -6,5 +6,4 @@ const Message = ({ success,error }) => {
         </div>
     )
 }
-
 export default Message
