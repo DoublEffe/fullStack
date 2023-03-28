@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import BlogList from './components/BlogList'
 import Login from './components/Login'
 import BlogForm from './components/BlogForm'
@@ -15,6 +15,7 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [success, setSucces] = useState(null)
   const [error, setError] = useState(null)
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -71,20 +72,22 @@ const App = () => {
   }
   
   const handleNewBlog = async (blog) => {
+    //blogFormRef.current.toggleVisibility()
     try{
+      console.log(blog.likes)
       await blogService.newBlog(blog,user.token)
+      
+      setBlogs(blogs.concat(blog))
+      setSucces(`a new blog ${blog.title} by ${blog.author}`)
+      setTimeout(() => {
+        setSucces(null)
+      }, 5000)
     }catch(e){
       setError('must provide title,author and url')
       setTimeout(() => {
         setError(null)
       }, 5000)
     }
-    
-    setSucces(`a new blog ${blog.title} by ${blog.author}`)
-    setTimeout(() => {
-      setSucces(null)
-    }, 5000)
-    
   }
 
   return (
@@ -97,7 +100,7 @@ const App = () => {
         <p>{ user.username } logged in</p>
         <button onClick={ handleLogOut }>Log out</button>
         <h2>create new</h2>
-        <Togglable buttonLabel="new blog" >
+        <Togglable buttonLabel="new blog" ref={ blogFormRef } >
           <BlogForm onCreate={handleNewBlog} />
         </Togglable>
         <h2>blogs</h2>
