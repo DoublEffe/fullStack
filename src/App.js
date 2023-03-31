@@ -17,10 +17,12 @@ const App = () => {
   const [error, setError] = useState(null)
   const blogFormRef = useRef()
 
+  const orderBlogs = (a,b) => b.likes - a.likes
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs( blogs.sort(orderBlogs) )
+    )
   }, [])
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const App = () => {
     event.preventDefault()
     setPassWord(event.target.value)
   }
-  
+
   const handleLogin =async (event) => {
     event.preventDefault()
     try{
@@ -70,14 +72,12 @@ const App = () => {
       setSucces(null)
     }, 5000)
   }
-  
+
   const handleNewBlog = async (blog) => {
-    //blogFormRef.current.toggleVisibility()
+    blogFormRef.current.toggleVisibility()
     try{
-      console.log(blog.likes)
-      await blogService.newBlog(blog,user.token)
-      
-      setBlogs(blogs.concat(blog))
+      const returnedBlog = await blogService.newBlog(blog,user.token)
+      setBlogs(blogs.concat(returnedBlog))
       setSucces(`a new blog ${blog.title} by ${blog.author}`)
       setTimeout(() => {
         setSucces(null)
@@ -90,13 +90,34 @@ const App = () => {
     }
   }
 
+  const handleUpdatingLikes = async (blog,id) => {
+    try{
+      await blogService.updateBlog(blog,id)
+      const allBlogs = await blogService.getAll()
+      setBlogs(allBlogs.sort(orderBlogs))
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
+  const handleBlogDelete = async (id) => {
+    try{
+      await blogService.deleteBlog(id,user.token)
+      const allBlogs = await blogService.getAll()
+      setBlogs(allBlogs.sort(orderBlogs))
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
   return (
     <div>
       <div><Message success={ success } error={ error } /></div>
       { user === null && <Login handlerName={ handleUserName } handlerPwd={ handlePwd } onLogin={ handleLogin } username={ username } password={ password } /> }
-      { user != null && 
+      { user !== null &&
       <div>
-        
         <p>{ user.username } logged in</p>
         <button onClick={ handleLogOut }>Log out</button>
         <h2>create new</h2>
@@ -105,10 +126,9 @@ const App = () => {
         </Togglable>
         <h2>blogs</h2>
         {blogs.map(blog =>
-          <BlogList key={blog.id} blog={blog}/>
+          <BlogList key={blog.id} blog={blog} onUpdate={ handleUpdatingLikes } user={ user } onDelete={ handleBlogDelete } />
         )}
       </div>}
-      
     </div>
   )
 }
