@@ -43,8 +43,8 @@ blogsRouter.delete('/:id',middleware.getUser,async (request, response) => {
 
 blogsRouter.put('/:id',async (request,response) => {
   let { title,author,url,likes } = request.body
-  await Blog.findByIdAndUpdate(request.params.id,{ title,author,url,likes },{ new:true, runValidators: true, context: 'query' })
-  response.status(204).end()
+  const blogUpdated = await Blog.findByIdAndUpdate(request.params.id,{ title,author,url,likes },{ new:true, runValidators: true, context: 'query' })
+  response.status(200).json(blogUpdated)
 })
 
 module.exports = blogsRouter
