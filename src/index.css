@@ -26,6 +26,14 @@
     margin-bottom: 5px;
   }
 
+  .blog-list-visible{
+    padding-top: 10px;
+    padding-left: 2px;
+    border: solid;
+    border-width: 1px;
+    margin-bottom: 5px;
+  }
+
   .list button{
     margin-left:10px;
     margin-bottom: 5px;
