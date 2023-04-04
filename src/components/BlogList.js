@@ -44,7 +44,7 @@ const BlogList = ({ blog,onUpdate,user,onDelete }) => {
       <div className="blog-list-visible" style={ showWhenVisible } >
         <p>Title: {blog.title}</p>
         <p>{ blog.url }</p>
-        <p>Likes: { blog.likes }<button onClick={ handleLikes }>like</button></p>
+        <p>Likes: { blog.likes }<button onClick={ handleLikes } id='like' >like</button></p>
         <p>Written by: { blog.author }</p>
         <button onClick={ toggleVisibility } >hide</button>
         <button style={ showDelete } onClick={ handleDelete } >delete</button>
