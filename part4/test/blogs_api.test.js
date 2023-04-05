@@ -152,7 +152,7 @@ test('updating a blog',async () => {
   await api
     .put(`/api/blogs/${ response.body[0].id }`)
     .send(toUpdate)
-    .expect(204)
+    .expect(200)
 
   const afterUpdate = await api.get('/api/blogs')
   expect(afterUpdate.body[0].title).toBe('prova3')

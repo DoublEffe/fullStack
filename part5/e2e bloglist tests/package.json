@@ -1,0 +1,15 @@
+{
+  "name": "e2etests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "E2ETests.js",
+  "scripts": {
+    "cypress:open": "cypress open"
+  },
+  "author": "fabio",
+  "license": "MIT",
+  "devDependencies": {
+    "cypress": "^12.9.0"
+    
+  }
+}

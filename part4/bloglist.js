@@ -16,6 +16,13 @@ app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
+// eslint-disable-next-line no-undef
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controller/testingroute')
+  app.use('/api/testing', testingRouter)
+}
+
+
 app.use(middleware.errorHandler)
 
 app.listen(config.PORT, () => {
