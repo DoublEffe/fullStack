@@ -64,10 +64,10 @@ describe('Blog app', function() {
       })
 
       it.only('creator of a blog can delete its own blog', function() {
-        //cy.get('#show').click()
-        cy.get('.blog-list').then(blog => console.log(blog))
-        //[0].__reactProps$jllvrzibg.children[3]._owner.key
-        //cy.get('.blog-list').should('have.length', 0)
+        cy.get('#show').click()
+        cy.contains('delete').click()
+        
+        cy.get('.blog-list').should('have.length', 0)
       })
     })
   })
