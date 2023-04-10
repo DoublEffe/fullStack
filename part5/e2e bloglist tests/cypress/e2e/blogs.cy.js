@@ -63,11 +63,47 @@ describe('Blog app', function() {
         cy.get('span').contains(1)
       })
 
-      it.only('creator of a blog can delete its own blog', function() {
+      it('creator of a blog can delete its own blog', function() {
         cy.get('#show').click()
         cy.contains('delete').click()
         
         cy.get('.blog-list').should('have.length', 0)
+      })
+
+      it('only the creator of a blog can see the delete button', function() {
+        cy.get('#show').click()
+
+        cy.contains('delete').should('be.visible')
+        
+        cy.contains('Log out').click()
+        const user = {
+          username: 'fabio2',
+          name: 'fab',
+          password: '1234'
+        }
+        cy.request('POST','http://localhost:3003/api/users',user)
+        cy.visit('http://localhost:3000')
+        cy.login({
+          username: 'fabio2',
+          password: '1234'
+        })
+        cy.get('#show').click()
+
+        cy.get('.blog-list-visible').should('not.contain','delete')
+      })
+
+      it.only('ordered by likes', function () {
+        cy.createAnother({
+          title: 'second',
+          author: 'fabio',
+          url: 'https://prova'
+        })
+        cy.get('.blog-list').eq(1).find('#show').click()
+        cy.get('.blog-list-visible').eq(1).find('#like').click()
+        cy.get('.blog-list-visible').eq(1).find('#hide').click()
+
+        cy.get('.blog-list').eq(0).should('contain','second')
+
       })
     })
   })

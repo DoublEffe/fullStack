@@ -49,10 +49,15 @@ Cypress.Commands.add('createBlog', () => {
   cy.visit('http://localhost:3000')
 })
 
-Cypress.Commands.add('deleteBlog', (id) => {
+Cypress.Commands.add('createAnother',({title,author,url}) => {
   cy.request({
-    url: `http://localhost:3003/api/blogs/${id}`,
-    method: 'DELETE',
+    url: 'http://localhost:3003/api/blogs',
+    method: 'POST',
+    body: {
+          title: title,
+          author: author,
+          url: url
+    },
     headers: {
       Authorization: `Bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}`
     }
